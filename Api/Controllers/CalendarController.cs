@@ -80,4 +80,11 @@ public class CalendarController : Controller
     {
         return Encrypt(userName, password);
     }
+    
+    [HttpGet]
+    [Route("health")]
+    public bool HealthCheck()
+    {
+        return true;
+    }
 }
