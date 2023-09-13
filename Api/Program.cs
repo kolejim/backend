@@ -1,4 +1,3 @@
-
 using Api.Biz;
 using Api.Crawler;
 using Api.Crawler.Ted;
@@ -16,7 +15,19 @@ services.AddSingleton<EncryptionService>();
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
+services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyOrigin() // Allow requests from any origin
+            .AllowAnyMethod() // Allow any HTTP method (GET, POST, PUT, etc.)
+            .AllowAnyHeader(); // Allow any HTTP headers
+    });
+});
+
 var app = builder.Build();
+
+app.UseCors();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
