@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
-[ApiController]
 [Route("[controller]")]
 public class CalendarController : Controller
 {
@@ -21,21 +20,7 @@ public class CalendarController : Controller
         _logger = logger;
     }
     
-    // Get username and password and generate encrypted string
-    private string Encrypt(string username, string password)
-    {
-        var encryptCredentials = _encryptionService.EncryptCredentials(username, password);
-        // encode using base64
-        return Convert.ToBase64String(Encoding.UTF8.GetBytes(encryptCredentials));
-    }
-    
-    private Credential Decrypt(string encrypted)
-    {
-        // decode encrypted parameter using base64
-        var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(encrypted));
-        var decryptCredentials = _encryptionService.DecryptCredentials(decoded);
-        return decryptCredentials;
-    }
+
 
     /*
      * Load student's schedule.
@@ -57,7 +42,8 @@ public class CalendarController : Controller
         var ip = HttpContext.Connection.RemoteIpAddress.ToString();
         _logger.LogInformation("Request from " + ip);
         
-        var credentials = Decrypt(credential);
+        var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(credential));
+        var credentials = _encryptionService.DecryptCredentials(decoded);
         var tedClient = new TedClient();
         var student = tedClient.LoadStudent(credentials.Username, credentials.Password);
         var calendar = CalendarService.GenerateCalendar(student.Schedule);
@@ -74,12 +60,7 @@ public class CalendarController : Controller
         return File(Encoding.UTF8.GetBytes(ics), "text/calendar", "schedule.ics");
     }
 
-    [HttpPost]
-    [Route("login")]
-    public string CreateToken(string userName, string password)
-    {
-        return Encrypt(userName, password);
-    }
+
     
     [HttpGet]
     [Route("health")]
@@ -87,4 +68,6 @@ public class CalendarController : Controller
     {
         return true;
     }
+    
+
 }
