@@ -1,6 +1,7 @@
 using System.Text;
 using Api.Biz;
 using Api.Controllers.Models;
+using Api.Crawler.Ted;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,11 +19,26 @@ public class AuthController : Controller
 
     [HttpPost]
     [Route("login")]
-    public CreateTokenResult CreateToken([FromBody] LoginRequest request)
+    public CreateTokenResult Login([FromBody] LoginRequest request)
     {
-        var token = Encrypt(request.UserName, request.Password);
-
-        var createTokenResult = new CreateTokenResult() { Token = token, Success = true };
+        bool success;
+        string token = "";
+        // todo SOLID
+        TedClient client = new TedClient();
+        try
+        {
+            client.LoadStudent(request.UserName, request.Password);
+            success = true;
+            token = Encrypt(request.UserName, request.Password);
+        }
+        catch (Exception e)
+        {
+            // todo add message by exception 
+            Console.WriteLine(e);
+            success = false;
+        }
+        
+        var createTokenResult = new CreateTokenResult() { Token = token, Success = success };
 
         return createTokenResult;
     }
