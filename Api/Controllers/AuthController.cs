@@ -1,5 +1,6 @@
 using System.Text;
 using Api.Biz;
+using Api.Controllers.Models;
 using Api.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,7 +9,6 @@ namespace Api.Controllers;
 [Route("[controller]")]
 public class AuthController : Controller
 {
-    
     EncryptionService _encryptionService;
 
     public AuthController(EncryptionService encryptionService)
@@ -18,17 +18,21 @@ public class AuthController : Controller
 
     [HttpPost]
     [Route("login")]
-    public string CreateToken([FromBody] LoginRequest request)
+    public CreateTokenResult CreateToken([FromBody] LoginRequest request)
     {
-        return Encrypt(request.UserName, request.Password);
+        var token = Encrypt(request.UserName, request.Password);
+
+        var createTokenResult = new CreateTokenResult() { Token = token, Success = true };
+
+        return createTokenResult;
     }
-    
+
     public class LoginRequest
     {
         public string UserName { get; set; }
         public string Password { get; set; }
     }
-    
+
     // Get username and password and generate encrypted string
     private string Encrypt(string username, string password)
     {
@@ -36,7 +40,7 @@ public class AuthController : Controller
         // encode using base64
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(encryptCredentials));
     }
-    
+
     private Credential Decrypt(string encrypted)
     {
         // decode encrypted parameter using base64
