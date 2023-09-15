@@ -12,12 +12,14 @@ namespace Api.Controllers;
 public class CalendarController : Controller
 {
     EncryptionService _encryptionService;
+    FirestoreService _firestoreService;
     ILogger _logger;
 
-    public CalendarController(EncryptionService encryptionService, ILogger<CalendarController> logger)
+    public CalendarController(EncryptionService encryptionService, ILogger<CalendarController> logger, FirestoreService firestoreService)
     {
         _encryptionService = encryptionService;
         _logger = logger;
+        _firestoreService = firestoreService;
     }
     
 
@@ -45,12 +47,15 @@ public class CalendarController : Controller
         var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(credential));
         var credentials = _encryptionService.DecryptCredentials(decoded);
         var tedClient = new TedClient();
+        
         var student = tedClient.LoadStudent(credentials.Username, credentials.Password);
+        _firestoreService.Save(student);
+
         var calendar = CalendarService.GenerateCalendar(student.Schedule);
+        
         // serilaize calendar to ics file
         var serializer = new CalendarSerializer();
         var ics = serializer.SerializeToString(calendar);
-        
         // stop execution time
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;

@@ -3,6 +3,7 @@ using Api.Biz;
 using Api.Controllers.Models;
 using Api.Crawler.Ted;
 using Api.Services;
+using Google.Cloud.Firestore;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -15,6 +16,22 @@ public class AuthController : Controller
     public AuthController(EncryptionService encryptionService)
     {
         _encryptionService = encryptionService;
+    }
+
+    [HttpGet]
+    [Route(("test"))]
+    public async Task<string> TestFirebase()
+    {
+        FirestoreDb db = FirestoreDb.Create("kolejim-398905");
+        DocumentReference docRef = db.Collection("users").Document("alovelacex");
+        Dictionary<string, object> user = new Dictionary<string, object>
+        {
+            { "First", "Ada" },
+            { "Last", "Lovelace" },
+            { "Born", 1815 }
+        };
+        await docRef.SetAsync(user);
+        return "ok";
     }
 
     [HttpPost]
