@@ -24,7 +24,7 @@ public class StudentIdentityParser
         DateTime birthDateAsDateTime;
         if (DateTime.TryParseExact(birthDate, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out birthDateAsDateTime))
 		{
-			student.BirthDate = birthDateAsDateTime;
+			student.BirthDate = birthDateAsDateTime.ToUniversalTime();
 		}
 		else
 		{

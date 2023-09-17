@@ -14,15 +14,15 @@ public class CalendarController : Controller
     EncryptionService _encryptionService;
     FirestoreService _firestoreService;
     ILogger _logger;
+    private TedClient _tedClient;
 
-    public CalendarController(EncryptionService encryptionService, ILogger<CalendarController> logger, FirestoreService firestoreService)
+    public CalendarController(EncryptionService encryptionService, ILogger<CalendarController> logger, FirestoreService firestoreService, TedClient tedClient)
     {
         _encryptionService = encryptionService;
         _logger = logger;
         _firestoreService = firestoreService;
+        _tedClient = tedClient;
     }
-    
-
 
     /*
      * Load student's schedule.
@@ -35,7 +35,7 @@ public class CalendarController : Controller
      */
     [HttpGet]
     [Route("{credential}")]
-    public IActionResult GenerateCalendar(string credential)
+    public async Task<IActionResult> GenerateCalendar(string credential)
     {
         // calculate execution time
         var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -46,10 +46,9 @@ public class CalendarController : Controller
         
         var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(credential));
         var credentials = _encryptionService.DecryptCredentials(decoded);
-        var tedClient = new TedClient();
         
-        var student = tedClient.LoadStudent(credentials.Username, credentials.Password);
-        _firestoreService.Save(student);
+        var student = await _tedClient.LoadStudent(credentials.Username, credentials.Password);
+        await _firestoreService.Save(student);
 
         var calendar = CalendarService.GenerateCalendar(student.Schedule);
         

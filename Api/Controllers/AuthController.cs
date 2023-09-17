@@ -11,40 +11,25 @@ namespace Api.Controllers;
 [Route("[controller]")]
 public class AuthController : Controller
 {
-    EncryptionService _encryptionService;
+    private EncryptionService _encryptionService;
+    private TedClient _tedClient;
 
-    public AuthController(EncryptionService encryptionService)
+    public AuthController(EncryptionService encryptionService, TedClient tedClient)
     {
         _encryptionService = encryptionService;
-    }
-
-    [HttpGet]
-    [Route(("test"))]
-    public async Task<string> TestFirebase()
-    {
-        FirestoreDb db = FirestoreDb.Create("kolejim-398905");
-        DocumentReference docRef = db.Collection("users").Document("alovelacex");
-        Dictionary<string, object> user = new Dictionary<string, object>
-        {
-            { "First", "Ada" },
-            { "Last", "Lovelace" },
-            { "Born", 1815 }
-        };
-        await docRef.SetAsync(user);
-        return "ok";
+        _tedClient = tedClient;
     }
 
     [HttpPost]
     [Route("login")]
-    public CreateTokenResult Login([FromBody] LoginRequest request)
+    public async Task<CreateTokenResult> Login([FromBody] LoginRequest request)
     {
         bool success;
         string token = "";
         // todo SOLID
-        TedClient client = new TedClient();
         try
         {
-            client.LoadStudent(request.UserName, request.Password);
+            await _tedClient.LoadStudent(request.UserName, request.Password);
             success = true;
             token = Encrypt(request.UserName, request.Password);
         }
@@ -64,6 +49,8 @@ public class AuthController : Controller
     {
         public string UserName { get; set; }
         public string Password { get; set; }
+        
+        public string Token { get; set; }
     }
 
     // Get username and password and generate encrypted string

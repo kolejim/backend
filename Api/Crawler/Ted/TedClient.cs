@@ -2,6 +2,7 @@ using System.Text.Json;
 using Api.Biz;
 using Api.Crawler.Ted.Models;
 using Api.Crawler.Ted.Parser;
+using Api.Services;
 using HtmlAgilityPack;
 using RestSharp;
 
@@ -9,8 +10,15 @@ namespace Api.Crawler.Ted
 {
     public class TedClient
     {
+        private FirestoreService _firestoreService;
+
+        public TedClient(FirestoreService firestoreService)
+        {
+            _firestoreService = firestoreService;
+        }
+
         // Login using username and password
-        public Student LoadStudent(string username, string password)
+        public async Task<Student> LoadStudent(string username, string password)
         {
             Student student = new Student();
 
@@ -45,6 +53,9 @@ namespace Api.Crawler.Ted
             // serialize student model to json and console log
             Console.Out.WriteLine("Generated student response = {0}", JsonSerializer.Serialize(student));
 
+            // Saving student to firestore
+            await _firestoreService.Save(student);
+            
             return student;
         }
 

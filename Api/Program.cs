@@ -12,6 +12,7 @@ var services = builder.Services;
 services.AddControllers();
 services.AddSingleton<EncryptionService>();
 services.AddSingleton<FirestoreService>();
+services.AddSingleton<TedClient>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
