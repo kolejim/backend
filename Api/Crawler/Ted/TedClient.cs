@@ -10,13 +10,7 @@ namespace Api.Crawler.Ted
 {
     public class TedClient
     {
-        private FirestoreService _firestoreService;
-
-        public TedClient(FirestoreService firestoreService)
-        {
-            _firestoreService = firestoreService;
-        }
-
+        
         // Login using username and password
         public async Task<Student> LoadStudent(string username, string password)
         {
@@ -53,9 +47,6 @@ namespace Api.Crawler.Ted
             // serialize student model to json and console log
             Console.Out.WriteLine("Generated student response = {0}", JsonSerializer.Serialize(student));
 
-            // Saving student to firestore
-            await _firestoreService.Save(student);
-            
             return student;
         }
 

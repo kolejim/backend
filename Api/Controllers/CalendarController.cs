@@ -12,15 +12,15 @@ namespace Api.Controllers;
 public class CalendarController : Controller
 {
     EncryptionService _encryptionService;
-    FirestoreService _firestoreService;
+    FirebaseService _firebaseService;
     ILogger _logger;
     private TedClient _tedClient;
 
-    public CalendarController(EncryptionService encryptionService, ILogger<CalendarController> logger, FirestoreService firestoreService, TedClient tedClient)
+    public CalendarController(EncryptionService encryptionService, ILogger<CalendarController> logger, FirebaseService firebaseService, TedClient tedClient)
     {
         _encryptionService = encryptionService;
         _logger = logger;
-        _firestoreService = firestoreService;
+        _firebaseService = firebaseService;
         _tedClient = tedClient;
     }
 
@@ -48,7 +48,8 @@ public class CalendarController : Controller
         var credentials = _encryptionService.DecryptCredentials(decoded);
         
         var student = await _tedClient.LoadStudent(credentials.Username, credentials.Password);
-        await _firestoreService.Save(student);
+
+        // await _firebaseService.Save(student);
 
         var calendar = CalendarService.GenerateCalendar(student.Schedule);
         

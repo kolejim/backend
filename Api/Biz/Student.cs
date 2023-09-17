@@ -29,10 +29,14 @@ namespace Api.Biz
 
         [FirestoreProperty]
         public DateTime BirthDate { get; set; }
+        
+        [FirestoreProperty]
+        public List<string> Users { get; set; }
 
         public Student()
         {
             Sorumlular = new List<Sorumlu>();
+            Users = new List<string>();
         }
     }
 }

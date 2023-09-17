@@ -19,6 +19,17 @@
         "ASPNETCORE_ENVIRONMENT": "Development",
         "GOOGLE_APPLICATION_CREDENTIALS": "firebase.json"
       }
+    },    
+    "Api Test": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "test/LoadStudents",
+      "applicationUrl": "http://localhost:8080",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "GOOGLE_APPLICATION_CREDENTIALS": "firebase.json"
+      }
     },
     "IIS Express": {
       "commandName": "IISExpress",

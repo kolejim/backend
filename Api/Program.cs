@@ -2,6 +2,7 @@ using Api.Biz;
 using Api.Crawler;
 using Api.Crawler.Ted;
 using Api.Services;
+using FirebaseAdmin;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,7 +12,7 @@ var services = builder.Services;
 
 services.AddControllers();
 services.AddSingleton<EncryptionService>();
-services.AddSingleton<FirestoreService>();
+services.AddSingleton<FirebaseService>();
 services.AddSingleton<TedClient>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 services.AddEndpointsApiExplorer();
@@ -45,5 +46,7 @@ app.UseAuthorization();
 app.MapControllers();
 var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 var url = $"http://0.0.0.0:{port}";
+
+FirebaseApp.Create();
 
 app.Run(url);
