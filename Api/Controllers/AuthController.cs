@@ -13,11 +13,13 @@ public class AuthController : Controller
 {
     private EncryptionService _encryptionService;
     private TedClient _tedClient;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(EncryptionService encryptionService, TedClient tedClient)
+    public AuthController(EncryptionService encryptionService, TedClient tedClient, ILogger<AuthController> logger)
     {
         _encryptionService = encryptionService;
         _tedClient = tedClient;
+        _logger = logger;
     }
 
     [HttpPost]
@@ -25,7 +27,10 @@ public class AuthController : Controller
     public async Task<CreateTokenResult> Login([FromBody] LoginRequest request)
     {
         bool success;
-        string token = "";
+        string token = request.Token;
+        
+        _logger.LogInformation("Token:\n"+token);
+        
         // todo SOLID
         try
         {
