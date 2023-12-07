@@ -49,9 +49,10 @@ namespace Api.Controllers
             try
             {
                 var student = await _tedClient.LoadStudent(request.UserName, request.Password);
+                token = Encrypt(request.UserName, request.Password);
+                student.Token = token;
                 await _firebaseService.Save(firebaseUserId,student);
                 success = true;
-                token = Encrypt(request.UserName, request.Password);
             }
             catch (Exception e)
             {

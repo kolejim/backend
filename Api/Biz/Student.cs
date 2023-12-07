@@ -23,6 +23,9 @@ namespace Api.Biz
 
         [FirestoreProperty]
         public string Section { get; set; }
+        
+        [FirestoreProperty]
+        public string Token { get; set; }
 
         [FirestoreProperty]
         public string IdentityNumber { get; set; }
